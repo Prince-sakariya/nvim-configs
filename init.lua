@@ -1,0 +1,2 @@
+require("dev")
+print("hello")

@@ -1,0 +1,3 @@
+return {
+    'ivanov/vim-ipython',
+}
