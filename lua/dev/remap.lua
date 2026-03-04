@@ -81,3 +81,12 @@ vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
 end)
 
+-- Copilot
+vim.g.copilot_no_tab_map = true
+
+vim.keymap.set("i", "<C-J>", "copilot#Accept('<CR>')", {
+    silent = true,
+    expr = true,
+    replace_keycodes = false,
+})
+
