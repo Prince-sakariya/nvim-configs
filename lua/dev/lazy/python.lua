@@ -1,3 +1,0 @@
-return {
-    'ivanov/vim-ipython',
-}

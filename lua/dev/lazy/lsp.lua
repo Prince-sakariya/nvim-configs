@@ -123,6 +123,9 @@ return {
                 header = "",
                 prefix = "",
             },
+            virtual_text = true,
+            underline = true,
+
         })
     end
 }
