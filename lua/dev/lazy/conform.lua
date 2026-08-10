@@ -11,7 +11,6 @@ return {
 				c = { "clang-format" },
 				cpp = { "clang-format" },
 				lua = { "stylua" },
-				go = { "gofmt" },
 				javascript = { "prettier" },
 				typescript = { "prettier" },
 				elixir = { "mix" },
