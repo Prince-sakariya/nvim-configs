@@ -91,3 +91,55 @@ vim.keymap.set("i", "<C-J>", "copilot#Accept('<CR>')", {
     replace_keycodes = false,
 })
 
+-- Latex
+vim.keymap.set("n", "<leader>ll", function()
+    local file = vim.fn.expand("%:p")
+    local target = vim.fn.expand("%:t:r")
+    local root = vim.fn.fnamemodify(file, ":h:h")
+    local pdf = root .. "/output/" .. target .. ".pdf"
+
+    print("Building " .. target)
+    print("Root " .. root)
+
+    vim.fn.jobstart({ "make", target }, {
+        cwd = root,
+
+        -- on_exit = function(_, code)
+        --     vim.schedule(function()
+        --         print("Exit code:", code)
+
+        --         if code == 0 then
+        --             vim.fn.jobstart({
+        --                 "open",
+        --                 "-a",
+        --                 "Skim",
+        --                 pdf,
+        --             })
+        --         end
+        --     end)
+        -- end,
+
+        on_exit = function(_, code)
+            vim.schedule(function()
+                if code == 0 then
+                    local pdf = root .. "/output/" .. target .. ".pdf"
+
+                    vim.fn.jobstart({
+                        "osascript",
+                        "-e",
+                        [[tell application "Skim"
+                            if (count of documents) > 0 then
+                                revert documents
+                            else
+                                open POSIX file "]] .. pdf .. [["
+                            end if
+                        end tell]]
+                    })
+                else
+                    print("Build failed")
+                end
+            end)
+        end
+
+    })
+end, { desc = "Compile LaTeX" })

@@ -12,6 +12,9 @@ return {
 					"rust",
 					"bash",
                     "python",
+					"go",
+                    "latex",
+                    "bibtex",
 				},
 
 				-- Install parsers synchronously (only applied to `ensure_installed`)
