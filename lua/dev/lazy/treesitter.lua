@@ -1,94 +1,227 @@
 return {
-	{
-		"nvim-treesitter/nvim-treesitter",
-        branch = "master",
-		config = function()
-			require("nvim-treesitter.configs").setup({
-				-- A list of parser names, or "all"
-				ensure_installed = {
-					"vimdoc",
-					"c",
-					"lua",
-					"rust",
-					"bash",
+    {
+        -- Treesitter provides syntax parsing for Neovim.
+        --
+        -- Unlike traditional syntax highlighting, Treesitter understands
+        -- the structure of the code.
+        --
+        -- It can be used for:
+        --   - Syntax highlighting
+        --   - Indentation
+        --   - Code-aware plugins
+        --   - Text objects
+        --   - Folding
+        --   - Parsing source code
+        "nvim-treesitter/nvim-treesitter",
+
+        -- Use the main branch.
+        branch = "main",
+
+        -- Load Treesitter immediately rather than lazily.
+        lazy = false,
+
+        -- Update installed Treesitter parsers when the plugin updates.
+        build = ":TSUpdate",
+
+        config = function()
+
+            -- Initialize the new nvim-treesitter configuration.
+            require("nvim-treesitter").setup()
+
+
+            ----------------------------------------------------------------
+            -- Install Treesitter parsers
+            ----------------------------------------------------------------
+
+            -- Treesitter itself is not the parser for every language.
+            --
+            -- Each language has its own parser, which is installed here.
+            require("nvim-treesitter").install({
+                "vimdoc",
+                "c",
+                "lua",
+                "rust",
+                "bash",
+                "python",
+                "latex",
+                "bibtex",
+            })
+
+
+            ----------------------------------------------------------------
+            -- Treesitter highlighting
+            ----------------------------------------------------------------
+
+            -- Enable Treesitter highlighting for the listed filetypes.
+            --
+            -- When one of these filetypes is opened, Neovim starts the
+            -- Treesitter parser for that buffer.
+            --
+            -- For example:
+            --
+            --   foo.rs  -> Rust Treesitter parser
+            --   foo.py  -> Python Treesitter parser
+            --   foo.lua -> Lua Treesitter parser
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = {
+                    "vim",
+                    "lua",
+                    "rust",
+                    "bash",
                     "python",
-					"go",
-                    "latex",
-                    "bibtex",
-				},
+                    "tex",
+                    "bib",
+                    "c",
+                },
 
-				-- Install parsers synchronously (only applied to `ensure_installed`)
-				sync_install = false,
+                callback = function(args)
 
-				-- Automatically install missing parsers when entering buffer
-				-- Recommendation: set to false if you don"t have `tree-sitter` CLI installed locally
-				auto_install = true,
+                    -- Start Treesitter for the current buffer.
+                    vim.treesitter.start(args.buf)
+                end,
+            })
 
-				indent = {
-					enable = true,
-				},
 
-				highlight = {
-					-- `false` will disable the whole extension
-					enable = true,
-					disable = function(lang, buf)
-						if lang == "html" then
-							print("disabled")
-							return true
-						end
+            ----------------------------------------------------------------
+            -- Treesitter indentation
+            ----------------------------------------------------------------
 
-						local max_filesize = 100 * 1024 -- 100 KB
-						local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-						if ok and stats and stats.size > max_filesize then
-							vim.notify(
-								"File larger than 100KB treesitter disabled for performance",
-								vim.log.levels.WARN,
-								{ title = "Treesitter" }
-							)
-							return true
-						end
-					end,
+            -- Tell Neovim to use Treesitter for indentation for these
+            -- filetypes.
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = {
+                    "vim",
+                    "lua",
+                    "rust",
+                    "bash",
+                    "python",
+                    "tex",
+                    "bib",
+                    "c",
+                },
 
-					-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-					-- Set this to `true` if you depend on "syntax" being enabled (like for indentation).
-					-- Using this option may slow down your editor, and you may see some duplicate highlights.
-					-- Instead of true it can also be a list of languages
-					additional_vim_regex_highlighting = { "markdown" },
-				},
-			})
+                callback = function()
 
-			local treesitter_parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-			treesitter_parser_config.templ = {
-				install_info = {
-					url = "https://github.com/vrischmann/tree-sitter-templ.git",
-					files = { "src/parser.c", "src/scanner.c" },
-					branch = "master",
-				},
-			}
+                    -- Use Treesitter's indentation expression.
+                    --
+                    -- This lets indentation be based on the parsed
+                    -- structure of the source code.
+                    vim.bo.indentexpr =
+                        "v:lua.require'nvim-treesitter'.indentexpr()"
+                end,
+            })
 
-			vim.treesitter.language.register("templ", "templ")
-		end,
-	},
 
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		after = "nvim-treesitter",
-		config = function()
-			require("treesitter-context").setup({
-				enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-				multiwindow = false, -- Enable multiwindow support.
-				max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
-				min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-				line_numbers = true,
-				multiline_threshold = 20, -- Maximum number of lines to show for a single context
-				trim_scope = "outer", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-				mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
-				-- Separator between context and content. Should be a single character string, like '-'.
-				-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
-				separator = nil,
-				zindex = 20, -- The Z-index of the context window
-				on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-			})
-		end,
-	},
+            ----------------------------------------------------------------
+            -- Custom Templ parser
+            ----------------------------------------------------------------
+
+            -- Templ is not one of the standard parsers installed above.
+            --
+            -- This autocommand registers the custom Templ parser whenever
+            -- Treesitter updates its parser information.
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "TSUpdate",
+
+                callback = function()
+
+                    -- Tell Treesitter how to obtain the Templ parser.
+                    require("nvim-treesitter.parsers").templ = {
+
+                        install_info = {
+
+                            -- Git repository containing the Templ parser.
+                            url =
+                                "https://github.com/vrischmann/tree-sitter-templ.git",
+
+                            -- Parser source files that need to be compiled.
+                            files = {
+                                "src/parser.c",
+                                "src/scanner.c",
+                            },
+
+                            -- Branch containing the parser source.
+                            branch = "master",
+                        },
+                    }
+                end,
+            })
+
+
+            -- Tell Neovim that the "templ" language should be associated
+            -- with the "templ" filetype.
+            --
+            -- This allows Neovim/Treesitter to use the Templ parser when
+            -- opening Templ files.
+            vim.treesitter.language.register("templ", "templ")
+        end,
+    },
+
+
+    {
+        -- Treesitter Context shows the current code context at the top
+        -- of the window.
+        --
+        -- For example, when you're deep inside:
+        --
+        --   function
+        --     if
+        --       for
+        --         ...
+        --
+        -- it can keep the surrounding function/struct/class visible
+        -- while you scroll through the file.
+        "nvim-treesitter/nvim-treesitter-context",
+
+        -- This plugin requires Treesitter.
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+        },
+
+        config = function()
+
+            -- Configure Treesitter Context.
+            require("treesitter-context").setup({
+
+                -- Enable the plugin.
+                enable = true,
+
+                -- Don't show context separately in every window.
+                multiwindow = false,
+
+                -- Maximum number of context lines.
+                --
+                -- 0 means no explicit maximum here.
+                max_lines = 0,
+
+                -- Minimum window height required before showing context.
+                min_window_height = 0,
+
+                -- Show line numbers in the context.
+                line_numbers = true,
+
+                -- Maximum number of lines allowed for a single
+                -- multiline context node.
+                multiline_threshold = 20,
+
+                -- Remove outer scopes when determining what context
+                -- should be displayed.
+                trim_scope = "outer",
+
+                -- Determine context based on the cursor position.
+                mode = "cursor",
+
+                -- Don't draw a separator between context and the rest
+                -- of the buffer.
+                separator = nil,
+
+                -- Z-index controls how the floating context appears
+                -- relative to other UI elements.
+                zindex = 20,
+
+                -- No custom on_attach function.
+                on_attach = nil,
+            })
+        end,
+    },
 }
