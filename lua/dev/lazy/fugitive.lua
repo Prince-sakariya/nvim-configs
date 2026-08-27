@@ -2,95 +2,136 @@ return {
 	-- vim-fugitive is a Git integration plugin for Neovim.
 	-- It provides access to Git commands and a Git status interface
 	-- directly inside Neovim.
-	"tpope/vim-fugitive",
+	{
+		"tpope/vim-fugitive",
 
-	config = function()
-		-- Open Fugitive's Git interface.
-		--
-		-- <leader>gs -> :Git
-		--
-		-- vim.cmd.Git is Fugitive's :Git command exposed through Lua.
-		vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
+		config = function()
+			-- Open Fugitive's Git interface.
+			--
+			-- vim.cmd.Git is Fugitive's :Git command exposed through Lua.
+			vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
 
-		-- Create an autocommand group for Fugitive-related autocommands.
-		local ThePrimeagen_Fugitive = vim.api.nvim_create_augroup("ThePrimeagen_Fugitive", {})
+			-- Create an autocommand group for Fugitive-related autocommands.
+			local ThePrimeagen_Fugitive = vim.api.nvim_create_augroup("ThePrimeagen_Fugitive", {})
 
-		-- Create a shorthand for defining autocommands.
-		local autocmd = vim.api.nvim_create_autocmd
+			-- Create a shorthand for defining autocommands.
+			local autocmd = vim.api.nvim_create_autocmd
 
-		-- Run this whenever entering a window.
-		autocmd("BufWinEnter", {
+			-- Run this whenever entering a window.
+			autocmd("BufWinEnter", {
 
-			-- Put this autocommand in the Fugitive group.
-			group = ThePrimeagen_Fugitive,
+				-- Put this autocommand in the Fugitive group.
+				group = ThePrimeagen_Fugitive,
 
-			-- Run for every buffer/window.
-			pattern = "*",
+				-- Run for every buffer/window.
+				pattern = "*",
 
-			callback = function()
-				-- Only continue if the current buffer is a Fugitive buffer.
-				--
-				-- ft = filetype.
-				-- Fugitive buffers have the "fugitive" filetype.
-				if vim.bo.ft ~= "fugitive" then
-					return
-				end
+				callback = function()
+					-- Only continue if the current buffer is a Fugitive buffer.
+					--
+					-- ft = filetype.
+					-- Fugitive buffers have the "fugitive" filetype.
+					if vim.bo.ft ~= "fugitive" then
+						return
+					end
 
-				-- Get the number/ID of the current buffer.
-				local bufnr = vim.api.nvim_get_current_buf()
+					-- Get the number/ID of the current buffer.
+					local bufnr = vim.api.nvim_get_current_buf()
 
-				-- Options for the keymaps below.
-				--
-				-- buffer = bufnr:
-				-- These mappings only exist inside this Fugitive buffer.
-				--
-				-- remap = false:
-				-- Don't allow these mappings to trigger other mappings.
-				local opts = { buffer = bufnr, remap = false }
+					-- Options for the keymaps below.
+					--
+					-- buffer = bufnr:
+					-- These mappings only exist inside this Fugitive buffer.
+					--
+					-- remap = false:
+					-- Don't allow these mappings to trigger other mappings.
+					local opts = { buffer = bufnr, remap = false }
 
-				-- Push the current Git branch.
-				--
-				-- <leader>p -> :Git push
-				vim.keymap.set("n", "<leader>p", function()
-					vim.cmd.Git("push")
-				end, opts)
+					-- Push the current Git branch.
+					--
+					-- <leader>p -> :Git push
+					vim.keymap.set("n", "<leader>p", function()
+						vim.cmd.Git("push")
+					end, opts)
 
-				-- Pull changes using rebase.
-				--
-				-- <leader>P -> :Git pull --rebase
-				--
-				-- Rebase puts your local commits on top of the
-				-- commits that were pulled from the remote.
-				--
-				-- rebase always
-				vim.keymap.set("n", "<leader>P", function()
-					vim.cmd.Git({ "pull", "--rebase" })
-				end, opts)
+					-- Pull changes using rebase.
+					--
+					-- <leader>P -> :Git pull --rebase
+					--
+					-- Rebase puts your local commits on top of the
+					-- commits that were pulled from the remote.
+					--
+					-- rebase always
+					vim.keymap.set("n", "<leader>P", function()
+						vim.cmd.Git({ "pull", "--rebase" })
+					end, opts)
 
-				-- Push the current branch and establish its upstream/tracking
-				-- branch on the remote.
-				--
-				-- <leader>t gives you:
-				--
-				-- :Git push -u origin
-				--
-				-- You can then type the branch name.
-				--
-				-- For example:
-				-- :Git push -u origin main
-				vim.keymap.set("n", "<leader>t", ":Git push -u origin ", opts)
-			end,
-		})
+					-- Push the current branch and establish its upstream/tracking
+					-- branch on the remote.
+					--
+					-- <leader>t gives you:
+					--
+					-- :Git push -u origin
+					--
+					-- You can then type the branch name.
+					--
+					-- For example:
+					-- :Git push -u origin main
+					vim.keymap.set("n", "<leader>t", ":Git push -u origin ", opts)
+				end,
+			})
 
-		-- During a Git merge conflict, Fugitive can show multiple versions
-		-- of the file in diff windows.
-		--
-		-- diffget //2:
-		-- Take the version from the "other" side of the merge.
-		vim.keymap.set("n", "gu", "<cmd>diffget //2<CR>", { desc = "[G]it Diff [U]pstream / Other" })
+			-- During a Git merge conflict, Fugitive can show multiple versions
+			-- of the file in diff windows.
+			--
+			-- diffget //2:
+			-- Take the version from the "other" side of the merge.
+			vim.keymap.set("n", "gu", "<cmd>diffget //2<CR>", { desc = "[G]it Diff [U]pstream / Other" })
 
-		-- diffget //3:
-		-- Take the version from the current side of the merge.
-		vim.keymap.set("n", "gh", "<cmd>diffget //3<CR>", { desc = "[G]it Diff [H]ead / Current" })
-	end,
+			-- diffget //3:
+			-- Take the version from the current side of the merge.
+			vim.keymap.set("n", "gh", "<cmd>diffget //3<CR>", { desc = "[G]it Diff [H]ead / Current" })
+		end,
+	},
+
+	-- Show Git changes directly in the sign column.
+	--
+	-- Added lines    -> +
+	-- Modified lines -> ~
+	-- Deleted lines  -> _
+	{
+		"lewis6991/gitsigns.nvim",
+
+		opts = {},
+
+		config = function()
+			local gs = require("gitsigns")
+
+			-- Go to the next Git change.
+			vim.keymap.set("n", "]c", gs.next_hunk)
+
+			-- Go to the previous Git change.
+			vim.keymap.set("n", "[c", gs.prev_hunk)
+
+			-- Preview the current Git change.
+			--
+			-- <leader>gp -> preview hunk
+			vim.keymap.set("n", "<leader>gp", gs.preview_hunk)
+
+			-- Show the diff for the current file.
+			--
+			-- <leader>gd -> git diff
+			vim.keymap.set("n", "<leader>gd", gs.diffthis)
+
+			-- Stage the current hunk.
+			--
+			-- <leader>hs -> stage hunk
+			vim.keymap.set("n", "<leader>hs", gs.stage_hunk)
+
+			-- Reset the current hunk.
+			--
+			-- <leader>hr -> reset hunk
+			vim.keymap.set("n", "<leader>hr", gs.reset_hunk)
+		end,
+	},
 }
