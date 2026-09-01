@@ -13,7 +13,7 @@ return {
     --
     -- This means lazy.nvim won't automatically move this plugin
     -- to a newer version.
-    tag = "0.1.5",
+    -- tag = "0.1.5",
 
     -- Telescope uses plenary.nvim for common Lua utilities.
     dependencies = {

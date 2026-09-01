@@ -24,13 +24,13 @@ vim.keymap.set("n", "<leader>zig", "<cmd>LspRestart<cr>")
 
 -- VIM with me :)
 vim.keymap.set("n", "<leader>vwm", function()
-    require("vim-with-me").StartVimWithMe()
+	require("vim-with-me").StartVimWithMe()
 end)
 vim.keymap.set("n", "<leader>svwm", function()
-    require("vim-with-me").StopVimWithMe()
+	require("vim-with-me").StopVimWithMe()
 end)
 vim.keymap.set("n", "<leader>lt", function()
-    vim.cmd [[ PlenaryBustedFile % ]]
+	vim.cmd([[ PlenaryBustedFile % ]])
 end)
 
 -- greatest remap ever
@@ -43,7 +43,7 @@ vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 -- Yank from the cursor to the end of the current line to the system clipboard
 vim.keymap.set("n", "<leader>Y", [["+Y"]])
 -- Delete text without overwriting the default register
-vim.keymap.set({ "n", "v" }, "<leader>d", "\"_d")
+vim.keymap.set({ "n", "v" }, "<leader>d", '"_d')
 
 -- This is going to get me cancelled
 vim.keymap.set("i", "<C-c>", "<Esc>")
@@ -77,93 +77,62 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 -- Remove executable permission from the current file
 vim.keymap.set("n", "<leader>X", "<cmd>!chmod -x %<CR>", { silent = true })
 
--- Insert a standard Go error check that returns the error
-vim.keymap.set(
-    "n",
-    "<leader>ee",
-    "oif err != nil {<CR>}<Esc>Oreturn err<Esc>"
-)
-
--- Insert a test assertion for an error
-vim.keymap.set(
-    "n",
-    "<leader>ea",
-    "oassert.NoError(err, \"\")<Esc>F\";a"
-)
-
--- Insert a Go error check that logs the error and exits
-vim.keymap.set(
-    "n",
-    "<leader>ef",
-    "oif err != nil {<CR>}<Esc>Olog.Fatalf(\"error: %s\\n\", err.Error())<Esc>jj"
-)
-
--- Insert a Go error check that logs the error using a logger
-vim.keymap.set(
-    "n",
-    "<leader>el",
-    "oif err != nil {<CR>}<Esc>O.logger.Error(\"error\", \"error\", err)<Esc>F.;i"
-)
-
 -- Start the "make_it_rain" Cellular Automaton animation
 vim.keymap.set("n", "<leader>ca", function()
-    require("cellular-automaton").start_animation("make_it_rain")
+	require("cellular-automaton").start_animation("make_it_rain")
 end)
 
 -- Reload (source) the current Neovim config file
 vim.keymap.set("n", "<leader><leader>", function()
-    vim.cmd("so")
+	vim.cmd("so")
 end)
 
 -- Latex
 vim.keymap.set("n", "<leader>ll", function()
-    local file = vim.fn.expand("%:p")
-    local target = vim.fn.expand("%:t:r")
-    local root = vim.fn.fnamemodify(file, ":h:h")
-    local pdf = root .. "/output/" .. target .. ".pdf"
+	local file = vim.fn.expand("%:p")
+	local target = vim.fn.expand("%:t:r")
+	local root = vim.fn.fnamemodify(file, ":h:h")
+	local pdf = root .. "/output/" .. target .. ".pdf"
 
-    print("Building " .. target)
-    print("Root " .. root)
+	print("Building " .. target)
+	print("Root " .. root)
 
-    vim.fn.jobstart({ "make", target }, {
-        cwd = root,
+	vim.fn.jobstart({ "make", target }, {
+		cwd = root,
 
-        -- on_exit = function(_, code)
-        --     vim.schedule(function()
-        --         print("Exit code:", code)
+		-- on_exit = function(_, code)
+		--     vim.schedule(function()
+		--         print("Exit code:", code)
 
-        --         if code == 0 then
-        --             vim.fn.jobstart({
-        --                 "open",
-        --                 "-a",
-        --                 "Skim",
-        --                 pdf,
-        --             })
-        --         end
-        --     end)
-        -- end,
+		--         if code == 0 then
+		--             vim.fn.jobstart({
+		--                 "open",
+		--                 "-a",
+		--                 "Skim",
+		--                 pdf,
+		--             })
+		--         end
+		--     end)
+		-- end,
 
-        on_exit = function(_, code)
-            vim.schedule(function()
-                if code == 0 then
-                    local pdf = root .. "/output/" .. target .. ".pdf"
-
-                    vim.fn.jobstart({
-                        "osascript",
-                        "-e",
-                        [[tell application "Skim"
+		on_exit = function(_, code)
+			vim.schedule(function()
+				if code == 0 then
+					vim.fn.jobstart({
+						"osascript",
+						"-e",
+						[[tell application "Skim"
                             if (count of documents) > 0 then
                                 revert documents
                             else
                                 open POSIX file "]] .. pdf .. [["
                             end if
-                        end tell]]
-                    })
-                else
-                    print("Build failed")
-                end
-            end)
-        end
-
-    })
+                        end tell]],
+					})
+				else
+					print("Build failed")
+				end
+			end)
+		end,
+	})
 end, { desc = "Compile LaTeX" })
