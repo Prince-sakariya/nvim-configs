@@ -82,9 +82,14 @@ vim.keymap.set("n", "<leader>ca", function()
 	require("cellular-automaton").start_animation("make_it_rain")
 end)
 
--- Reload (source) the current Neovim config file
+-- Reload the main Neovim configuration.
+--
+-- <leader><leader> = reload init.lua
+--
+-- Unlike vim.cmd("so"), this explicitly loads init.lua instead of
+-- accidentally trying to execute whatever file is currently open.
 vim.keymap.set("n", "<leader><leader>", function()
-	vim.cmd("so")
+	dofile(vim.fn.stdpath("config") .. "/init.lua")
 end)
 
 -- Latex
