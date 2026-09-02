@@ -68,6 +68,6 @@ return {
 		vim.keymap.set("n", "<leader>f", function()
 			-- bufnr = 0 means the current buffer.
 			require("conform").format({ bufnr = 0 })
-		end)
+		end, { desc = "[F]ormat file" })
 	end,
 }

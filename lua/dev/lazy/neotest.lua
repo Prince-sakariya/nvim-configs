@@ -1,60 +1,53 @@
 return {
-	-- Neotest: framework for running and inspecting tests from Neovim
 	"nvim-neotest/neotest",
-
 	dependencies = {
-		-- Async library required by Neotest
 		"nvim-neotest/nvim-nio",
-
-		-- General-purpose Lua utilities
 		"nvim-lua/plenary.nvim",
-
-		-- Makes CursorHold events work reliably with Neotest
 		"antoinemadec/FixCursorHold.nvim",
-
-		-- Used by Neotest adapters to understand source code structure
 		"nvim-treesitter/nvim-treesitter",
+		-- Teaches Neotest how to discover and run Rust tests.
+		"rouge8/neotest-rust",
 	},
-
 	config = function()
 		local neotest = require("neotest")
 
-		-- Run the nearest test under the cursor
+		neotest.setup({
+			adapters = {
+				require("neotest-rust"),
+			},
+		})
 		vim.keymap.set("n", "<leader>tr", function()
-			neotest.run.run({
+			require("neotest").run.run({
 				suite = false,
+				testify = true,
 			})
-		end, { desc = "Test: Run Nearest Test" })
+		end, { desc = "Debug: [T]est - [R]un Nearest " })
 
-		-- Toggle the Neotest summary window
 		vim.keymap.set("n", "<leader>tv", function()
-			neotest.summary.toggle()
-		end, { desc = "Test: Toggle Summary" })
+			require("neotest.consumers.summary").toggle()
+		end, { desc = "Debug: [T]oogle [V]iew Summary" })
 
-		-- Run the entire test suite
 		vim.keymap.set("n", "<leader>ts", function()
-			neotest.run.run({
+			require("neotest").run.run({
 				suite = true,
+				testify = true,
 			})
-		end, { desc = "Test: Run Test Suite" })
+		end, { desc = "Debug: Running [T]est [S]uite" })
 
-		-- Debug the nearest test using nvim-dap
-		-- This requires a compatible DAP configuration for your language.
 		vim.keymap.set("n", "<leader>td", function()
-			neotest.run.run({
+			require("neotest").run.run({
 				suite = false,
+				testify = true,
 				strategy = "dap",
 			})
-		end, { desc = "Test: Debug Nearest Test" })
+		end, { desc = "Debug: [D]ebug Nearest [T]est" })
 
-		-- Open the output of the most recently run test
 		vim.keymap.set("n", "<leader>to", function()
-			neotest.output.open()
-		end, { desc = "Test: Open Test Output" })
+			require("neotest").output.open()
+		end, { desc = "Debug: Open [T]est [O]utput" })
 
-		-- Run all tests in the current working directory
 		vim.keymap.set("n", "<leader>ta", function()
-			neotest.run.run(vim.fn.getcwd())
-		end, { desc = "Test: Run All Tests" })
+			require("neotest").run.run(vim.fn.getcwd())
+		end, { desc = "Debug: Open test output" })
 	end,
 }

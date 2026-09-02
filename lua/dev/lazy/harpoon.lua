@@ -20,12 +20,12 @@ return {
 		-- Add the current file to Harpoon's list.
 		vim.keymap.set("n", "<leader>a", function()
 			harpoon:list():prepend()
-		end)
+		end, { desc = "Harpoon: [A]dd file to beginning" })
 
 		-- Add the current file to Harpoon's list.
 		vim.keymap.set("n", "<leader>a", function()
 			harpoon:list():add()
-		end)
+		end, { desc = "Harpoon: [A]dd file" })
 
 		-- Open/close Harpoon's quick menu.
 		--
@@ -33,26 +33,26 @@ return {
 		-- currently stored in your Harpoon list.
 		vim.keymap.set("n", "<c-e>", function()
 			harpoon.ui:toggle_quick_menu(harpoon:list())
-		end)
+		end, { desc = "Harpoon: Toggle quick menu" })
 
 		-- Jump directly to the first file in the Harpoon list.
 		vim.keymap.set("n", "<m-1>", function()
 			harpoon:list():select(1)
-		end)
+		end, { desc = "Harpoon: Select file 1" })
 
 		-- Jump directly to the second file in the Harpoon list.
 		vim.keymap.set("n", "<m-2>", function()
 			harpoon:list():select(2)
-		end)
+		end, { desc = "Harpoon: Select file 2" })
 
 		-- Jump directly to the third file in the Harpoon list.
 		vim.keymap.set("n", "<m-3>", function()
 			harpoon:list():select(3)
-		end)
+		end, { desc = "Harpoon: Select file 3" })
 
 		-- Jump directly to the fourth file in the Harpoon list.
 		vim.keymap.set("n", "<m-4>", function()
 			harpoon:list():select(4)
-		end)
+		end, { desc = "Harpoon: Select file 4" })
 	end,
 }

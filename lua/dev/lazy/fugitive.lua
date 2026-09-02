@@ -87,10 +87,10 @@ return {
 		--
 		-- diffget //2:
 		-- Take the version from the "other" side of the merge.
-		vim.keymap.set("n", "gu", "<cmd>diffget //2<CR>")
+		vim.keymap.set("n", "gu", "<cmd>diffget //2<CR>", { desc = "[G]it Diff [U]pstream / Other" })
 
 		-- diffget //3:
 		-- Take the version from the current side of the merge.
-		vim.keymap.set("n", "gh", "<cmd>diffget //3<CR>")
+		vim.keymap.set("n", "gh", "<cmd>diffget //3<CR>", { desc = "[G]it Diff [H]ead / Current" })
 	end,
 }
