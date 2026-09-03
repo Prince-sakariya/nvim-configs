@@ -74,24 +74,6 @@ autocmd("BufWritePre", {
 	command = [[%s/\s\+$//e]],
 })
 
--- Change colorscheme depending on the file type.
---
--- Zig files:
---     tokyonight-night
---
--- Everything else:
---     rose-pine-moon
-autocmd("BufEnter", {
-	group = ThePrimeagenGroup,
-	callback = function()
-		if vim.bo.filetype == "zig" then
-			pcall(vim.cmd.colorscheme, "tokyonight-night")
-		else
-			pcall(vim.cmd.colorscheme, "rose-pine-moon")
-		end
-	end,
-})
-
 -- ============================================================================
 -- LSP
 -- ============================================================================
