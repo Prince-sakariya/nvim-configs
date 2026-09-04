@@ -1,5 +1,10 @@
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, {
+
+-- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, {
+-- 	desc = "Open File Explorer",
+-- })
+
+vim.keymap.set("n", "<leader>pv", "<cmd>Oil<CR>", {
 	desc = "Open File Explorer",
 })
 

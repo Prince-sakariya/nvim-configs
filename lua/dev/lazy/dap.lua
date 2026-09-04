@@ -152,39 +152,25 @@ return {
 		dependencies = {
 			"williamboman/mason.nvim",
 			"mfussenegger/nvim-dap",
-			"neovim/nvim-lspconfig",
+			-- "neovim/nvim-lspconfig",
 		},
 		config = function()
 			require("mason-nvim-dap").setup({
 				ensure_installed = {
-					"delve",
+					"codelldb",
+					"debugpy",
 				},
 				automatic_installation = true,
 				handlers = {
 					function(config)
 						require("mason-nvim-dap").default_setup(config)
 					end,
-					delve = function(config)
-						table.insert(config.configurations, 1, {
-							args = function()
-								return vim.split(vim.fn.input("args> "), " ")
-							end,
-							type = "delve",
-							name = "file",
-							request = "launch",
-							program = "${file}",
-							outputMode = "remote",
-						})
-						table.insert(config.configurations, 1, {
-							args = function()
-								return vim.split(vim.fn.input("args> "), " ")
-							end,
-							type = "delve",
-							name = "file args",
-							request = "launch",
-							program = "${file}",
-							outputMode = "remote",
-						})
+
+					python = function(config)
+						config.adapters = {
+							type = "executable",
+							command = vim.fn.stdpath("data") .. "/mason/packages/debugpy/debugpy-adapter",
+						}
 						require("mason-nvim-dap").default_setup(config)
 					end,
 				},

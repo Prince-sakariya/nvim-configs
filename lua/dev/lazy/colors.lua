@@ -21,8 +21,10 @@ return {
 			})
 
 			ColorMyPencils()
+			-- ColorMyPencils("rose-pine-dawn")
 		end,
 	},
+
 	-- PERF: fully optimised
 	-- HACK: hmm, this looks a bit fancy
 	-- TODO: What else?

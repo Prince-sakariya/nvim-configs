@@ -5,8 +5,8 @@ return {
 		"nvim-lua/plenary.nvim",
 		"antoinemadec/FixCursorHold.nvim",
 		"nvim-treesitter/nvim-treesitter",
-		-- Teaches Neotest how to discover and run Rust tests.
 		"rouge8/neotest-rust",
+		"nvim-neotest/neotest-python",
 	},
 	config = function()
 		local neotest = require("neotest")
@@ -14,12 +14,13 @@ return {
 		neotest.setup({
 			adapters = {
 				require("neotest-rust"),
+				require("neotest-python"),
 			},
 		})
+
 		vim.keymap.set("n", "<leader>tr", function()
 			require("neotest").run.run({
 				suite = false,
-				testify = true,
 			})
 		end, { desc = "Debug: [T]est - [R]un Nearest " })
 
@@ -30,14 +31,12 @@ return {
 		vim.keymap.set("n", "<leader>ts", function()
 			require("neotest").run.run({
 				suite = true,
-				testify = true,
 			})
 		end, { desc = "Debug: Running [T]est [S]uite" })
 
 		vim.keymap.set("n", "<leader>td", function()
 			require("neotest").run.run({
 				suite = false,
-				testify = true,
 				strategy = "dap",
 			})
 		end, { desc = "Debug: [D]ebug Nearest [T]est" })
