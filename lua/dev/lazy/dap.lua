@@ -155,15 +155,18 @@ return {
 			-- "neovim/nvim-lspconfig",
 		},
 		config = function()
-			require("mason-nvim-dap").setup({
+			local dap = require("dap")
+			local mason_dap = require("mason-nvim-dap")
+			mason_dap.setup({
 				ensure_installed = {
 					"codelldb",
 					"debugpy",
 				},
 				automatic_installation = true,
+
 				handlers = {
 					function(config)
-						require("mason-nvim-dap").default_setup(config)
+						mason_dap.default_setup(config)
 					end,
 
 					python = function(config)
@@ -175,6 +178,11 @@ return {
 					end,
 				},
 			})
+
+			dap.adapters.codelldb = {
+				type = "executable",
+				command = vim.fn.stdpath("data") .. "/mason/bin/codelldb",
+			}
 		end,
 	},
 }
