@@ -9,6 +9,9 @@ return {
 				["<C-p>"] = false,
 				["<C-;>"] = "actions.preview",
 			},
+			view_options = {
+				show_hidden = true,
+			},
 		},
 	},
 }

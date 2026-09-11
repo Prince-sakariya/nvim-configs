@@ -177,9 +177,23 @@ return {
 
 				-- LuaSnip snippets.
 				{ name = "luasnip" },
+
+				-- Path completion
+				{ name = "path" },
 			}, {
 				-- Words from the current buffer.
 				{ name = "buffer" },
+			}),
+		})
+
+		-- Completion in the `:` command line.
+		cmp.setup.cmdline(":", {
+			mapping = cmp.mapping.preset.cmdline(),
+
+			sources = cmp.config.sources({
+				{ name = "path" },
+			}, {
+				{ name = "cmdline" },
 			}),
 		})
 

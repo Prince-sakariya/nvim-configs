@@ -16,12 +16,15 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", {
 	desc = "Move Selection Up",
 })
 
+-- ----------------------------------------------------------------------
+-- ONLY for testing nvim/lua pluging
 vim.api.nvim_set_keymap(
 	"n",
 	"<leader>tf",
 	"<Plug>PlenaryTestFile",
 	{ noremap = false, silent = false, desc = "Run Plenary Test File" }
 )
+-- ----------------------------------------------------------------------
 
 vim.keymap.set("n", "J", "mzJ`z", {
 	desc = "Join Lines",
